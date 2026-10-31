@@ -22,43 +22,7 @@ class NonCanonicalLogError(LuminaError):
     pass
 
 
-class EmptyLogError(LuminaError):
-    """Raised when processing results in zero events."""
-
-    pass
-
-
-class UnsupportedSourceError(LuminaError):
-    """Raised when an unsupported source type is requested."""
-
-    pass
-
-
 class UnsupportedCatalogVersion(LuminaError):
     """Raised when an unsupported MITRE ATT&CK catalog version is requested."""
-
-    pass
-
-
-class UnknownProfileAbility(LuminaError):
-    """Raised when a profile names an ability id outside the subset."""
-
-    pass
-
-
-class InputLimitError(LuminaError):
-    """Raised when input exceeds configured limits."""
-
-    pass
-
-
-class InvalidConfigError(LuminaError):
-    """Raised when configuration is invalid."""
-
-    pass
-
-
-class AnalysisError(LuminaError):
-    """Raised when analysis fails."""
 
     pass

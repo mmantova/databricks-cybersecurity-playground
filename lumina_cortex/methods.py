@@ -1,9 +1,9 @@
 """
-What each analysis method runs, described once (GLOSSARY.md; ADR 0003).
+What each analysis method runs, described once.
 
-``describe_method`` looks the description up from an ``AnalysisMethod`` (or its name);
-the analysis (``assess_threat``), the file entry point (``LuminaPipeline.analyze_path``),
-the backend engine and the analyze route read it instead of switching on the method.
+``describe_method`` looks the description up from an ``AnalysisMethod`` (or its name).
+``assess_threat`` reads it instead of switching on the method. The notebook calls
+``thesis-v1`` and ``product``.
 """
 
 from dataclasses import dataclass
@@ -13,7 +13,6 @@ import pandas as pd
 
 from lumina_cortex.config.thresholds import (
     PRODUCT_BEACON,
-    PRODUCT_METHOD_V1,
     PRODUCT_MITRE_CONFORMANCE,
     PRODUCT_V2_DRIFT,
     PRODUCT_V2_THRESHOLDS,
@@ -25,9 +24,8 @@ from lumina_cortex.config.thresholds import (
     Thresholds,
 )
 from lumina_cortex.engine.coverage_scorer import score_pattern_coverage
-from lumina_cortex.engine.drift import detect_drift, detect_proportional_drift
+from lumina_cortex.engine.drift import detect_proportional_drift
 from lumina_cortex.engine.js_drift import detect_js_drift
-from lumina_cortex.engine.scorer import score_attack_patterns
 from lumina_cortex.engine.thesis_scorer import score_thesis_patterns
 from lumina_cortex.mitre.catalog import TTPCatalog
 from lumina_cortex.models import AnalysisMethod, DriftResult, ScorerResult
@@ -120,28 +118,10 @@ _DESCRIPTIONS: Dict[AnalysisMethod, MethodDescription] = {
 }
 
 
-# The Product method of 0.2.1, frozen as ``product-v1`` (PRODUCT_METHOD_V1; decision 10 of
-# .scratch/product-v2/decisions.md): the per_1k thesis thresholds, the chi-square drift
-# over fixed windows and the Jaccard x edges scorer. An evaluation column only: it is
-# not an AnalysisMethod, so no selector (app, MCP, CLI) can name it; the evaluation
-# passes this description itself. Its assessment names the Product method.
-PRODUCT_V1 = MethodDescription(
-    method=AnalysisMethod.PRODUCT,
-    frozen_thresholds=PRODUCT_METHOD_V1.thresholds,
-    mitre=PRODUCT_METHOD_V1.mitre,
-    detect_drift=lambda df, t: detect_drift(df, thresholds=t),
-    score=lambda df, cat, t: score_attack_patterns(df, catalog=cat, thresholds=t),
-    evidence=False,
-    stores_verdict=False,
-    version=PRODUCT_METHOD_V1.version,
-)
-
-
 def describe_method(method: Union[AnalysisMethod, str, MethodDescription]) -> MethodDescription:
     """The description of ``method``; ValueError naming the valid methods for an unknown one.
 
-    A description (``PRODUCT_V1``) is returned as is: the evaluation runs a frozen
-    version by passing its description, never by name.
+    A ``MethodDescription`` is returned as is.
     """
     if isinstance(method, MethodDescription):
         return method

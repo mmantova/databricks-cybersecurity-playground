@@ -67,9 +67,8 @@ def assess_threat(
         source_type: Source type for coverage gap analysis.
         method: The analysis method (``AnalysisMethod``; default the Product method).
             ``thesis-v1`` runs with the frozen thesis thresholds (THESIS_THRESHOLDS_V1,
-            absolute drift mode) and refuses a ``thresholds`` override. A frozen
-            version's description (``lumina_cortex.methods.PRODUCT_V1``, the evaluation
-            only) runs as described and also refuses an override.
+            absolute drift mode) and refuses a ``thresholds`` override. A
+            ``MethodDescription`` passed in runs as described and also refuses an override.
 
     Returns:
         ThreatAssessment with verdict, confidence, and all engine results.

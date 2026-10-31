@@ -8,7 +8,7 @@ with ISO-8601 Z dates, 6dp floats, and NaN→None conversion.
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, Optional, Tuple, Union
 import math
 
 
@@ -41,14 +41,6 @@ class Verdict(str, Enum):
     BENIGN = "BENIGN"
 
 
-class CaseStrategy(str, Enum):
-    """Strategy for grouping events into cases."""
-
-    HOST = "host"
-    IP = "ip"
-    TIME_WINDOW = "time_window"
-
-
 class DriftMode(str, Enum):
     """Mode for drift count calculation."""
 
@@ -75,26 +67,6 @@ class AnalysisMethod(str, Enum):
             return cls(value)
         except ValueError:
             raise ValueError(f"method must be one of: {', '.join(m.value for m in cls)}") from None
-
-
-@dataclass(frozen=True)
-class ParseStats:
-    """Statistics from parsing a log source."""
-
-    total_lines: int
-    parsed_events: int
-    skipped_malformed: int
-    skipped_unmapped: int
-    bytes_read: int
-
-    def to_dict(self) -> Dict[str, Any]:
-        return _sanitize_dict({
-            "total_lines": self.total_lines,
-            "parsed_events": self.parsed_events,
-            "skipped_malformed": self.skipped_malformed,
-            "skipped_unmapped": self.skipped_unmapped,
-            "bytes_read": self.bytes_read,
-        })
 
 
 @dataclass(frozen=True)
@@ -446,133 +418,3 @@ class ThreatAssessment:
         result["metadata"] = _sanitize_dict(self.metadata)
         result["evidence"] = _sanitize_dict(self.evidence)
         return result
-
-
-@dataclass(frozen=True)
-class SoarAuditResult:
-    """Deterministic SOAR / policy-block audit — not MITRE conformance."""
-
-    violation_count: int = 0
-    cases_affected: int = 0
-    top_activities: Tuple[Tuple[str, int], ...] = ()
-    sample_rows: Tuple[Dict[str, Any], ...] = ()
-    filter_column: str = ""
-    filter_value: str = ""
-    time_s: float = 0.0
-
-    def to_dict(self) -> Dict[str, Any]:
-        return _sanitize_dict({
-            "violation_count": self.violation_count,
-            "cases_affected": self.cases_affected,
-            "top_activities": [list(a) for a in self.top_activities],
-            "sample_rows": list(self.sample_rows),
-            "filter_column": self.filter_column,
-            "filter_value": self.filter_value,
-            "time_s": self.time_s,
-        })
-
-
-@dataclass(frozen=True)
-class ForensicBrief:
-    """Handover artifact: DFG map + optional SOAR audit + hunt summary."""
-
-    dfg: DFGResult
-    soar: SoarAuditResult
-    map_path: Optional[str] = None
-    summary: str = ""
-    cases: int = 0
-    events: int = 0
-    activities: int = 0
-    time_s: float = 0.0
-    # Top DFG edges for the Board UI (source → target, count); PNG is optional offline art.
-    top_edges: Tuple[Tuple[str, str, int], ...] = ()
-
-    def to_dict(self) -> Dict[str, Any]:
-        return {
-            "dfg": self.dfg.to_dict(),
-            "soar": self.soar.to_dict(),
-            "map_path": self.map_path,
-            "summary": self.summary,
-            "cases": self.cases,
-            "events": self.events,
-            "activities": self.activities,
-            "time_s": _sanitize_value(self.time_s),
-            "top_edges": [list(e) for e in self.top_edges],
-        }
-
-
-@dataclass(frozen=True)
-class DataSource:
-    """A telemetry source for the pipeline."""
-
-    name: str
-    source_type: str  # "zeek" | "sysmon" | "cloudtrail" | "netflow" | ...
-    path: str
-    case_strategy: CaseStrategy = CaseStrategy.TIME_WINDOW
-    expected_verdict: str = "unknown"
-
-    def to_dict(self) -> Dict[str, Any]:
-        return {
-            "name": self.name,
-            "source_type": self.source_type,
-            "path": self.path,
-            "case_strategy": self.case_strategy.value,
-            "expected_verdict": self.expected_verdict,
-        }
-
-
-_WALL_CLOCK_KEYS = frozenset({"time_s", "total_time_s"})
-
-
-def _without_wall_clock(value: Any) -> Any:
-    """Drop the engines' measured durations, which differ from run to run."""
-    if isinstance(value, dict):
-        return {k: _without_wall_clock(v) for k, v in value.items() if k not in _WALL_CLOCK_KEYS}
-    if isinstance(value, list):
-        return [_without_wall_clock(v) for v in value]
-    return value
-
-
-@dataclass(frozen=True)
-class DatasetReport:
-    """One source's entry in a pipeline report: its assessment, or why it has none.
-
-    The assessment is written without the engines' wall-clock durations (``time_s``,
-    ``total_time_s``) so that the same input gives the same report.
-    """
-
-    source: DataSource
-    method: AnalysisMethod
-    assessment: Optional[ThreatAssessment] = None
-    error: Optional[str] = None
-
-    def to_dict(self) -> Dict[str, Any]:
-        return {
-            "source": self.source.to_dict(),
-            "method": self.method.value,
-            "verdict": self.assessment.verdict.value if self.assessment else None,
-            "error": self.error,
-            "assessment": _without_wall_clock(self.assessment.to_dict()) if self.assessment else None,
-        }
-
-
-@dataclass(frozen=True)
-class PipelineReport:
-    """Report from running the full pipeline over a batch of sources (thesis stage 4).
-
-    ``timestamp`` is whatever the caller passes (None by default) so that the same
-    input gives the same document.
-    """
-
-    timestamp: Optional[str]
-    datasets_analyzed: int
-    summary: Dict[str, Any]
-    datasets: Tuple[DatasetReport, ...]
-
-    def to_dict(self) -> Dict[str, Any]:
-        return {
-            "timestamp": self.timestamp,
-            "datasets_analyzed": self.datasets_analyzed,
-            "summary": _sanitize_dict(self.summary),
-            "datasets": [d.to_dict() for d in self.datasets],
-        }

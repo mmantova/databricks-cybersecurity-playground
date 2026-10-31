@@ -1,6 +1,5 @@
-"""Configuration modules for Lumina Cortex."""
+"""Thresholds for the product and thesis-v1 methods."""
 
-from lumina_cortex.config.limits import InputLimits, DEFAULT_LIMITS
 from lumina_cortex.config.thresholds import (
     JsDrift,
     MitreConformance,
@@ -14,8 +13,6 @@ from lumina_cortex.config.thresholds import (
 )
 
 __all__ = [
-    "InputLimits",
-    "DEFAULT_LIMITS",
     "JsDrift",
     "MitreConformance",
     "PRODUCT_MITRE_CONFORMANCE",
