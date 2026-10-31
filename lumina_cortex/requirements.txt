@@ -1,22 +1,27 @@
-# Core dependencies (exact pins)
-pm4py==2.7.23.11
-pandas==3.0.6
-numpy==2.5.4
-networkx==3.7
-scipy==1.18.1
+# Lock testado em 2026-10-31: Python 3.12, mesmo pandas/numpy do Databricks serverless env 6.
+# As faixas aceitas estão em pyproject.toml; este arquivo é o ambiente exato verificado.
 
-# Transitive dependencies (full lock)
-contourpy==1.3.2
+# Core
+pm4py==2.7.23.11
+pandas==2.3.3
+numpy==2.3.4
+networkx==3.4.2
+scipy==1.15.3
+
+# Transitive (pm4py, matplotlib)
+contourpy==1.4.0
+cvxopt==1.3.3
 cycler==0.12.1
-fonttools==4.59.0
-graphviz==0.20.3
-kiwisolver==1.4.9
-lxml==6.0.1
-matplotlib==3.10.5
+fonttools==4.68.0
+graphviz==0.21
+kiwisolver==1.5.1
+lxml==6.1.3
+matplotlib==3.11.2
 packaging==25.0
-pillow==11.3.0
+pillow==13.0.0
 pyparsing==3.2.5
-python-dateutil==2.9.0.post0
-pytz==2025.2
+python-dateutil==3.0.0
+pytz==2026.6
 six==1.17.0
-tzdata==2025.2
+tqdm==4.70.1
+tzdata==2026.6

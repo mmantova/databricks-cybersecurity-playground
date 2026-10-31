@@ -5,12 +5,16 @@ description = "Lumina Cortex threat-hunting library vendored into this fork."
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "AGPL-3.0-only" }
+# pm4py exato: é o motor e muda resultados entre versões.
+# Os demais em faixas testadas, para não trocar o pandas/numpy do Databricks serverless
+# (env 4/5: pandas 2.2.3, numpy 2.1.3; env 6: pandas 2.3.3, numpy 2.3.4).
+# Saída de assess_threat idêntica em pandas 2.2.3, 2.3.3 e 3.0.6 (2026-10-31).
 dependencies = [
   "pm4py==2.7.23.11",
-  "pandas==3.0.6",
-  "numpy==2.5.4",
-  "networkx==3.7",
-  "scipy==1.18.1",
+  "pandas>=2.2.3,<3.1",
+  "numpy>=2.1.3,<3",
+  "networkx>=3.4.2",
+  "scipy>=1.15.3",
 ]
 
 [tool.setuptools.packages.find]
