@@ -1,0 +1,20 @@
+[
+  {
+    "id": "credential-access",
+    "name": "Credential access",
+    "objective": "Repeated logon failures followed by a success.",
+    "atomic_ordering": ["T1110"]
+  },
+  {
+    "id": "defense-evasion",
+    "name": "Defense evasion",
+    "objective": "Files and processes that hide or impair what the Source can record.",
+    "atomic_ordering": ["T1027", "T1562", "T1036"]
+  },
+  {
+    "id": "discovery-lateral",
+    "name": "Discovery and lateral movement",
+    "objective": "Account and host discovery, then a remote logon.",
+    "atomic_ordering": ["T1087", "T1018", "T1021"]
+  }
+]

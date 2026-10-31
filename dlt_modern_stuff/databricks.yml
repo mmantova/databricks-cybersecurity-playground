@@ -10,6 +10,7 @@ sync:
   include:
     - src/helpers.py
     - src/__init__.py
+    - src/lumina_functions.py
   
 targets:
   dev:

@@ -1,0 +1,29 @@
+MITRE ATT&CK Attribution Notice
+==============================
+
+This product includes a subset of MITRE ATT&CK® content.
+
+MITRE ATT&CK® is a registered trademark of The MITRE Corporation.
+
+The MITRE ATT&CK content in this product is provided under the following terms:
+
+Copyright © The MITRE Corporation. All rights reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+The MITRE ATT&CK content included is:
+- Version: Enterprise v15.1
+- Subset: 19 techniques + 3 procedures selected for Lumina Cortex thesis validation
+- Source: https://attack.mitre.org/
+
+This subset is frozen and versioned for reproducibility of thesis results.

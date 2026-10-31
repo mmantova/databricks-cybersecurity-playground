@@ -1,0 +1,20 @@
+[project]
+name = "lumina-cortex"
+version = "0.4.1"
+description = "Lumina Cortex threat-hunting library vendored into this fork."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "AGPL-3.0-only" }
+dependencies = [
+  "pm4py==2.7.23.11",
+  "pandas==3.0.6",
+  "numpy==2.5.4",
+  "networkx==3.7",
+  "scipy==1.18.1",
+]
+
+[tool.setuptools.packages.find]
+include = ["lumina_cortex*"]
+
+[tool.setuptools.package-data]
+lumina_cortex = ["mitre/data/*"]
