@@ -3,7 +3,7 @@
 Different pieces of code related to doing cybersecurity on Databricks
 
 * [uc-udfs](uc-udfs/) - cybersecurity-related user-defined functions for Unity Catalog.
-* [lumina_cortex](lumina_cortex/) - Lumina Cortex 0.4.1, the process-mining hunting library (AGPL-3.0, see [NOTICE.md](NOTICE.md)). `uc-udfs/lumina_activity.sql` is the SQL form of its frozen activity map, and `dlt_modern_stuff/src/lumina_functions.py` re-exports `activity_for` and `assess_threat`.
+* [lumina_cortex](lumina_cortex/) - Lumina Cortex 0.5.0, the process-mining hunting library (AGPL-3.0, see [NOTICE.md](NOTICE.md)). `uc-udfs/lumina_activity.sql` is the SQL form of its frozen activity map, and `dlt_modern_stuff/src/lumina_functions.py` re-exports `activity_for` and `assess_threat`.
 * [vuln-info-ingest](vuln-info-ingest/) - ingestion of vulnerability data (CVE v5, GitHub advisories, OSV, CISA KEV) with Databricks Asset Bundles.
 
 ## Source code/supporting materials for blog posts

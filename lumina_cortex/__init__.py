@@ -4,7 +4,7 @@ Lumina Cortex - Autonomous threat hunting via process mining.
 Be The Hunter, not the Hunted.
 """
 
-__version__ = "0.4.1"
+__version__ = "0.5.0"
 
 from lumina_cortex.columns import (
     CASE,

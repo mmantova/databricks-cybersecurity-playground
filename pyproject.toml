@@ -1,6 +1,6 @@
 [project]
 name = "lumina-cortex"
-version = "0.4.1"
+version = "0.5.0"
 description = "Lumina Cortex threat-hunting library vendored into this fork."
 readme = "README.md"
 requires-python = ">=3.10"

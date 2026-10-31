@@ -19,7 +19,7 @@
     {
       "id": "T1078",
       "name": "Valid Accounts",
-      "tactics": ["TA0001", "TA0003"],
+      "tactics": ["TA0001", "TA0003", "TA0004", "TA0005"],
       "activities": ["Authentication: Logon"],
       "edges": []
     },
@@ -32,7 +32,7 @@
     },
     {
       "id": "T1070",
-      "name": "Indicator Blocking",
+      "name": "Indicator Removal",
       "tactics": ["TA0005"],
       "activities": ["File: Delete", "Registry: Delete"],
       "edges": []

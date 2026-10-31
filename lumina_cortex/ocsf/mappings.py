@@ -2,7 +2,8 @@
 Activities each source type can produce.
 
 Coverage gaps treat a TTP as blind when it needs an activity outside this set.
-The notebook assesses Zeek with source_type="netflow".
+Zeek logs use source_type="zeek": flows (conn, dns), Kerberos (kerberos.log)
+and file transfers (files.log, smb_files.log). "netflow" covers flows only.
 """
 
 from typing import Dict, Final, FrozenSet
@@ -60,6 +61,10 @@ SOURCE_CAPABILITIES: Final[Dict[str, FrozenSet[str]]] = {
         "Network: Connection Close",
         "DNS: Query",
         "DNS: Response",
+        "Authentication: Logon",
+        "Authentication: Logon Failure",
+        "File: Read",
+        "File: Write",
     }),
     "windows": frozenset({
         "Process: Launch",

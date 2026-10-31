@@ -60,39 +60,51 @@ VOCABULARY: FrozenSet[str] = frozenset({
     "Cloud: Activity",
 })
 
-# Mapping from OCSF (class_uid, activity_id) tuples to canonical activity names
-# This is the canonical mapping used by ocsf_to_pm4py
+# Mapping from OCSF (class_uid, activity_id) tuples to canonical activity names.
+# Ids checked against the OCSF 1.3.0 schema API (https://schema.ocsf.io/api/1.3.0/classes/<name>).
+# Before 0.5.0 this table used wrong class_uids (1001 as Process, 1002 as File,
+# 1003 as Registry, 5001/5002 as API/Cloud) and treated (3002, 2) as a logon failure.
 _OCSF_TO_ACTIVITY: Dict[tuple[int, int], str] = {
-    # Network Activity (class_uid=4001)
+    # Network Activity (4001): 1 Open, 2 Close
     (4001, 1): "Network: Connection Open",
     (4001, 2): "Network: Connection Close",
-    # DNS Activity (class_uid=4003)
+    # DNS Activity (4003): 1 Query, 2 Response
     (4003, 1): "DNS: Query",
     (4003, 2): "DNS: Response",
-    # Process Activity (class_uid=1001)
-    (1001, 1): "Process: Launch",
-    (1001, 2): "Process: Terminate",
-    (1001, 3): "Process: Open",
-    # Module Activity (class_uid=1005)
+    # Process Activity (1007): 1 Launch, 2 Terminate, 3 Open
+    (1007, 1): "Process: Launch",
+    (1007, 2): "Process: Terminate",
+    (1007, 3): "Process: Open",
+    # Module Activity (1005): 1 Load
     (1005, 1): "Module: Load",
-    # File Activity (class_uid=1002)
-    (1002, 1): "File: Read",
-    (1002, 2): "File: Write",
-    (1002, 3): "File: Delete",
-    (1002, 4): "File: Create",
-    (1002, 5): "File: Access",
-    # Registry Activity (class_uid=1003)
-    (1003, 1): "Registry: Modify",
-    (1003, 2): "Registry: Create",
-    (1003, 3): "Registry: Delete",
-    # Authentication Activity (class_uid=3002)
+    # File System Activity (1001): 1 Create, 2 Read, 3 Update, 4 Delete, 14 Open.
+    # OCSF has no "Write"; Update is the write.
+    (1001, 1): "File: Create",
+    (1001, 2): "File: Read",
+    (1001, 3): "File: Write",
+    (1001, 4): "File: Delete",
+    (1001, 14): "File: Access",
+    # Registry Key Activity (201001, Windows extension): 1 Create, 3 Modify, 4 Delete
+    (201001, 1): "Registry: Create",
+    (201001, 3): "Registry: Modify",
+    (201001, 4): "Registry: Delete",
+    # Registry Value Activity (201002, Windows extension): 2 Set, 4 Delete
+    (201002, 2): "Registry: Modify",
+    (201002, 4): "Registry: Delete",
+    # Authentication (3002): 1 Logon, 2 Logoff. A failed logon is (3002, 1) with
+    # status_id 2 (Failure); see activity_for. Ticket activities (3, 4, 5, 6) are not mapped.
     (3002, 1): "Authentication: Logon",
-    (3002, 2): "Authentication: Logon Failure",
-    (3002, 3): "Authentication: Logoff",
-    # API/Cloud Activity (class_uid=5001, 5002)
-    (5001, 1): "API: Call",
-    (5002, 1): "Cloud: Activity",
+    (3002, 2): "Authentication: Logoff",
+    # API Activity (6003): 1 Create, 2 Read, 3 Update, 4 Delete
+    (6003, 1): "API: Call",
+    (6003, 2): "API: Call",
+    (6003, 3): "API: Call",
+    (6003, 4): "API: Call",
+    # "Cloud: Activity" has no OCSF class; adapters emit it directly.
 }
+
+# OCSF status_id for a failed outcome.
+_STATUS_FAILURE = 2
 
 
 def activity_for(event: dict) -> Optional[str]:
@@ -100,7 +112,8 @@ def activity_for(event: dict) -> Optional[str]:
     Look up the canonical activity name for an OCSF event.
 
     Args:
-        event: An OCSF event dict with class_uid and activity_id.
+        event: An OCSF event dict with class_uid and activity_id, and optionally
+            status_id. A logon (3002, 1) with status_id 2 is a logon failure.
 
     Returns:
         The canonical activity name, or None if not found.
@@ -110,6 +123,9 @@ def activity_for(event: dict) -> Optional[str]:
 
     if class_uid is None or activity_id is None:
         return None
+
+    if (class_uid, activity_id) == (3002, 1) and event.get("status_id") == _STATUS_FAILURE:
+        return "Authentication: Logon Failure"
 
     return _OCSF_TO_ACTIVITY.get((class_uid, activity_id))
 
